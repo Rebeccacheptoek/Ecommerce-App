@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # Laravel Application
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: ecommerce-app
+    volumes:
+      - ./:/var/www/html
+      - ./docker/php/laravel-pool.conf:/usr/local/etc/php-fpm.d/laravel.conf  # Share socket volume
+      - php-socket:/var/run/php
+    networks:
+      - laravel-network
+    depends_on:
+      - postgresql
+      - redis
+
+  # Web Server (Nginx)
+  nginx:
+    image: nginx:1.27.3
+    container_name: ecommerce-nginx
+    ports:
+      - "8090:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - php-socket:/var/run/php
+    networks:
+      - laravel-network
+    depends_on:
+      - app
+
+  # MySQL Database
+  postgresql:
+    image: postgres:16
+    container_name: ecommerce-postgresql
+    environment:
+        POSTGRES_DB: ${DB_DATABASE:-ecommerce}
+        POSTGRES_USER: ${DB_USERNAME:-becca}
+        POSTGRES_PASSWORD: ${DB_PASSWORD:-2112}
+    volumes:
+        - postgres-data:/var/lib/postgresql/data
+    networks:
+      - laravel-network
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:latest
+    container_name: ecommerce-redis
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6380:6379"
+    networks:
+      - laravel-network
+
+# Volumes for persistent data
+volumes:
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+  php-socket:
+    driver: local
+
+# Network configuration
+networks:
+  laravel-network:
+    driver: bridge # provides an internal network for the services to communicate with each other
+    name: laravel-network
