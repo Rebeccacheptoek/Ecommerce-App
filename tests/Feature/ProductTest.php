@@ -24,7 +24,7 @@ class ProductTest extends TestCase
                     '*' => [
                         'id',
                         'name',
-                        'description',
+                        'details',
                         'price',
                         'stock',
                         'image_url',
