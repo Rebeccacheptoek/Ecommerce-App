@@ -1,66 +1,221 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Application Setup and Deployment Guide
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Local Development Setup
 
-## About Laravel
+### Prerequisites
+- PHP 8.2 or higher
+- Composer
+- PostgreSQL 15
+- Redis
+- Node.js and npm
+- Git
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Setting Up Local Environment
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. **Clone the Repository**
+```bash
+git clone https://github.com/Rebeccacheptoek/Ecommerce.git
+cd Ecommerce
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+2. **Install PHP Dependencies**
+```bash
+composer install
+```
 
-## Learning Laravel
+3. **Environment Configuration**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+4. **Configure Database**
+Edit `.env` file with your PostgreSQL credentials:
+```
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=ecommerce
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+5. **Configure Redis**
+Ensure Redis settings in `.env`:
+```
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+6. **Run Migrations and Seeders**
+```bash
+php artisan migrate
+php artisan db:seed
+```
 
-## Laravel Sponsors
+7. **Install Frontend Dependencies**
+```bash
+npm install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+8. **Start Development Servers**
+```bash
+# Start Laravel server
+php artisan serve
 
-### Premium Partners
+# In a separate terminal, start Vite development server
+npm run dev
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+The application should now be running at `http://localhost:8000`
 
-## Contributing
+### Running Tests
+```bash
+php artisan test
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## CI/CD Deployment
 
-## Code of Conduct
+### GitHub Actions Setup
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. **Required Secrets**
+Set up these secrets in your GitHub repository:
+- `DB_PASSWORD`: The password for your PostgreSQL database
+- `DB_USERNAME`: The username for your PostgreSQL database
+- `REDIS_PASSWORD`: The password for Redis (if applicable)
+- `APP_ENV`: Set to `production`
+- `APP_KEY`: Your application key
 
-## Security Vulnerabilities
+2. **Workflow Configuration**
+The CI/CD pipeline is configured in `.github/workflows/laravel.yml`. This file includes steps to:
+- Set up the PHP environment
+- Install dependencies using Composer
+- Set up the database
+- Run Laravel tests
+- Deploy to the production server
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Workflow Steps
 
-## License
+1. **Push to Main Branch**
+```bash
+git add .
+git commit -m "Your commit message"
+git pull origin main
+git push origin main
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+2. **CI Pipeline Stages**
+The GitHub Actions workflow will automatically:
+- Set up PHP 8.2
+- Install dependencies
+- Configure environment variables using secrets
+- Run tests
+- Deploy if tests pass
+
+### Deployment Configuration
+
+1. **Environment Variables**
+Ensure these are configured in your deployment environment:
+```
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=your_application_key
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=ecommerce
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+```
+
+2. **Server Configuration**
+- Ensure the server is running PHP 8.2 or higher.
+- Install and configure PostgreSQL 15.
+- Install and start Redis.
+- Ensure Node.js and npm are installed for building frontend assets.
+
+3. **Post-Deployment Commands**
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan migrate --force
+```
+
+4. **Setting Up a Web Server**
+Configure your web server (e.g., Nginx or Apache) to point to the `public` directory of the Laravel application. For example, an Nginx configuration might look like this:
+```nginx
+server {
+    listen 80;
+    server_name your_domain.com;
+
+    root /path/to/your/project/public;
+    index index.php index.html;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+```
+
+### Troubleshooting
+
+**Common Issues and Solutions:**
+
+1. **Redis Connection Issues**
+```bash
+# Check Redis service
+sudo systemctl status redis
+
+# Clear Redis cache
+php artisan cache:clear
+```
+
+2. **Database Connection Issues**
+```bash
+# Check PostgreSQL service
+sudo systemctl status postgresql
+
+# Reset database
+php artisan migrate:fresh --seed
+```
+
+3. **GitHub Actions Failures**
+- Check the Actions tab in GitHub repository
+- Verify environment variables and secrets
+- Review test logs for specific errors
+
+4. **Permission Issues**
+Ensure proper permissions are set on your project directory:
+```bash
+sudo chown -R www-data:www-data /path/to/your/project
+sudo chmod -R 775 /path/to/your/project/storage /path/to/your/project/bootstrap/cache
+```
+
+### Maintenance Mode
+
+To put application in maintenance mode:
+```bash
+php artisan down
+```
+
+To bring application back online:
+```bash
+php artisan up
+```
+
+For additional support or issues, please create an issue in the GitHub repository.
