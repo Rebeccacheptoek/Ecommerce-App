@@ -1,6 +1,15 @@
 #!/bin/bash
 set -e
 
+# Start PHP-FPM in background
+php-fpm -D
+
+# Wait for PHP-FPM to create socket
+while [ ! -S /var/run/php/laravel-php-fpm.sock   ]; do
+  echo "Waiting for PHP-FPM socket..."
+  sleep 1
+done
+
 # Update hosts file
 
 if [ ! -f "/var/www/html/.env" ]; then
@@ -9,7 +18,7 @@ if [ ! -f "/var/www/html/.env" ]; then
 fi
 
 php artisan config:cache
-php artisan migrate --force
+
 
 npm install
 

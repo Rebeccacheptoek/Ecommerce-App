@@ -27,7 +27,7 @@ class CartService
 
         // Store cart item in Redis
         $currentQuantity = $this->redis->hget($cartKey, $productId) ?? 0;
-        $this->redis->hset($cartKey, $productId, $currentQuantity + $quantity);
+        $this->redis->hset($cartKey, $productId, $currentQuantity + 1);
 
         return true;
     }

@@ -16,16 +16,15 @@
                                 Placed on {{ $order->created_at->format('M d, Y') }}
                             </p>
                         </div>
-                        <div class="text-right">
-                            <p class="font-semibold text-lg">Total: ${{ number_format($order->total_amount, 2) }}</p>
-                            <p class="text-sm text-gray-600">Status: {{ ucfirst($order->status) }}</p>
-                        </div>
+
                     </div>
 
                     <div class="border-t pt-4">
                         <h4 class="font-semibold mb-2 text-lg">Order Items</h4>
                         <div class="space-y-2">
+                            <?php $totalPrice = 0 ?>
                             @foreach($order->items as $item)
+                                <?php $totalPrice += $item->price * $item->quantity;?>
                                 <div class="flex justify-between items-center">
                                     <div>
                                         <p class="font-medium">{{ $item->product->name }}</p>
@@ -36,6 +35,10 @@
                                     <p class="font-medium">${{ number_format($item->price * $item->quantity, 2) }}</p>
                                 </div>
                             @endforeach
+                            <div class="text-right">
+                                <p class="font-semibold text-lg">Total: ${{ number_format($totalPrice, 2) }}</p>
+                                <p class="text-sm text-gray-600">Status: {{ ucfirst($order->status) }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>

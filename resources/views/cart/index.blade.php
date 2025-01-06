@@ -68,7 +68,7 @@
         <div class="text-center py-12">
             <p class="text-xl text-gray-600 mb-6">Your cart is empty</p>
             <a href="{{ route('products.index') }}"
-               class="px-8 py-4 bg-blue-500 text-white text-lg font-semibold rounded-lg hover:bg-blue-600 transition">
+               class="px-8 py-4 bg-gray-800  text-white text-lg font-semibold rounded-lg hover:bg-gray-600 transition">
                 Continue Shopping
             </a>
         </div>
