@@ -29,7 +29,7 @@ class OrderTest extends TestCase
 
         $response = $this->actingAs($user)
             ->postJson('/api/orders');
-        
+
         // dd($response->getContent());
         $response->assertStatus(201)
             ->assertJsonStructure([
@@ -51,7 +51,7 @@ class OrderTest extends TestCase
 
         $this->assertDatabaseHas('orders', [
             'user_id' => $user->id,
-            'total_price' => 200,
+            'total_price' => "200.00",
             'status' => 'pending'
         ]);
     }
