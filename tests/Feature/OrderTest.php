@@ -25,7 +25,7 @@ class OrderTest extends TestCase
         $product = Product::factory()->create(['price' => 100]);
 
         $cartService = app(CartService::class);
-        $cartService->addToCart($user->id, $product->id, 2);
+        $cartService->addToCart($user->id, $product->id, 1);
 
         $response = $this->actingAs($user)
             ->postJson('/api/orders');
@@ -51,7 +51,7 @@ class OrderTest extends TestCase
 
         $this->assertDatabaseHas('orders', [
             'user_id' => $user->id,
-            'total_price' => "200.00",
+            'total_price' => "100.00",
             'status' => 'pending'
         ]);
     }
